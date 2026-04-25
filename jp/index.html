@@ -11,6 +11,17 @@
   <link rel="stylesheet" href="styles.css?v=17"/>
   <link rel="stylesheet" href="styles-extra.css?v=34"/>
 
+  <!-- Set raw mode class as early as possible so CSS applies before paint
+       (avoids a flash of the iPhone frame on the chooser → mini-app navigation). -->
+  <script>
+    (function() {
+      var p = new URLSearchParams(location.search);
+      if (p.has('raw') || p.has('miniapp')) {
+        document.documentElement.classList.add('wm-raw');
+      }
+    })();
+  </script>
+
   <!-- Embed mode (for LP iframe) -->
   <style>
     body.wm-embed {
@@ -24,6 +35,40 @@
       display: flex; align-items: center; justify-content: center;
       min-height: 0 !important;
     }
+
+    /* Raw mode: no iPhone frame, app fills the LINE webview / browser.
+       Used when the URL has ?raw=1 (mini-app variants in the chooser). */
+    html.wm-raw, html.wm-raw body {
+      background: #fff !important;
+      margin: 0; padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    html.wm-raw .wm-stage {
+      background: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      min-height: 100vh; min-height: 100dvh;
+      display: block;
+    }
+    html.wm-raw #mount {
+      width: 100%;
+      height: 100vh; height: 100dvh;
+    }
+    /* Hide simulated chrome — real LINE provides its own webview header */
+    html.wm-raw .wm-line-chat,
+    html.wm-raw .wm-liff-header { display: none !important; }
+    /* Promote the sliding miniapp sheet to the full container */
+    html.wm-raw .wm-miniapp-sheet {
+      position: relative !important;
+      transform: none !important;
+      height: 100vh; height: 100dvh;
+      border-radius: 0 !important;
+      overflow: auto;
+      display: block !important;
+      box-shadow: none !important;
+    }
+    html.wm-raw .wm-liff-body { padding-top: 0 !important; }
   </style>
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
@@ -127,10 +172,31 @@
   <script type="text/babel" src="app.jsx?v=32"></script>
 
   <script type="text/babel" data-presets="react">
-    // Host shell — mounts the iOS frame with auto-scale to fit viewport
+    // Host shell — mounts the iOS frame with auto-scale to fit viewport,
+    // OR (in raw mode) renders the App fullscreen with no frame at all.
     function Host() {
-      // In embed mode (LP iframe), use scale=1 — LP handles external scaling
-      const isEmbed = new URLSearchParams(window.location.search).has('embed');
+      const params = new URLSearchParams(window.location.search);
+      const isEmbed = params.has('embed');
+      const isRaw = params.has('raw') || params.has('miniapp');
+
+      // Raw mode: app fills the viewport, no iPhone chrome.
+      // Used by the chooser's "Mini app" variants — opens like a real LIFF page.
+      if (isRaw) {
+        return (
+          <div style={{
+            width: '100%',
+            height: '100vh',
+            maxWidth: 540,            // sane cap on desktop preview
+            margin: '0 auto',
+            position: 'relative',
+            overflow: 'hidden',
+            background: '#fff',
+          }}>
+            <App/>
+          </div>
+        );
+      }
+
       const [scale, setScale] = React.useState(1);
       React.useEffect(() => {
         if (isEmbed) return; // no auto-scaling in embed mode
