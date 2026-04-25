@@ -226,8 +226,10 @@
   </div>
 
   <script>
-    // Remember the user's last choice for next time. Auto-redirect after a
-    // short delay so they can change their mind by clicking before then.
+    // Remember the user's last choice. Auto-redirect after a short delay so
+    // they can change their mind by clicking before then. Auto-redirect ONLY
+    // if the saved value still matches one of the current chooser buttons —
+    // protects against stale URLs after the chooser is updated.
     var KEY = 'mwm-mode';
     var url = new URL(location.href);
     var force = url.searchParams.has('pick');
@@ -235,12 +237,16 @@
     try { saved = localStorage.getItem(KEY); } catch (e) {}
 
     if (saved && !force) {
-      // Highlight the saved choice and auto-redirect after 1.4s
       var btn = document.querySelector('[data-href="' + saved + '"]');
-      if (btn) btn.style.boxShadow = '0 12px 32px rgba(0,0,0,0.32), 0 0 0 3px rgba(255,255,255,0.7)';
-      setTimeout(function() {
-        if (!document.body.dataset.cancelled) location.href = saved;
-      }, 1400);
+      if (btn) {
+        btn.style.boxShadow = '0 12px 32px rgba(0,0,0,0.32), 0 0 0 3px rgba(255,255,255,0.7)';
+        setTimeout(function() {
+          if (!document.body.dataset.cancelled) location.href = saved;
+        }, 1400);
+      } else {
+        // saved value is stale (chooser was updated) — clear it, show picker
+        try { localStorage.removeItem(KEY); } catch (e) {}
+      }
     }
 
     document.querySelectorAll('.lang-btn').forEach(function(btn) {
