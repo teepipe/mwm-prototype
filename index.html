@@ -7,6 +7,23 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;800;900&family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet"/>
+  <!-- LIFF SDK on the chooser too — keeps LINE session context alive
+       across the navigation to /jp/ or /en/ when running in LINE. -->
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+    (function() {
+      var LIFF_ID = '2009881592-781XB87C';
+      window.WM_LIFF = { ready: false, profile: null, error: null, inClient: false };
+      if (typeof liff === 'undefined') return;
+      liff.init({ liffId: LIFF_ID }).catch(function(err) {
+        console.warn('[LIFF chooser] init failed', err);
+        window.WM_LIFF.error = String(err && err.message || err);
+      }).then(function() {
+        window.WM_LIFF.ready = true;
+        try { window.WM_LIFF.inClient = !!liff.isInClient(); } catch (e) {}
+      });
+    })();
+  </script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
@@ -174,9 +191,12 @@
 
     document.querySelectorAll('.lang-btn').forEach(function(btn) {
       btn.addEventListener('click', function() {
-        document.body.dataset.cancelled = '1';   // stop any pending auto-redirect
+        document.body.dataset.cancelled = '1';
         var href = btn.getAttribute('data-href');
         try { localStorage.setItem(KEY, href.replace(/\/$/, '')); } catch (e) {}
+        // Same-origin navigation; LIFF v2 keeps session context across same-origin
+        // navigations under the registered endpoint URL, so /jp/ and /en/ inherit
+        // the LINE session.
         location.href = href;
       });
     });
