@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <title>Mico Work Match — language / 言語</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;800;900&family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      font-family: "Noto Sans JP", "Inter", -apple-system, sans-serif;
+      background: linear-gradient(160deg, #2a2eea 0%, #5e60ff 60%, #8b8eff 100%);
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    body {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 20px; gap: 28px;
+      min-height: 100vh;
+      position: relative;
+    }
+    body::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.18) 0%, transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(255,255,255,0.12) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 4px; z-index: 1;
+    }
+    .brand-mark {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(255,255,255,0.95);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+    .brand-mark img { width: 28px; height: 28px; object-fit: contain; }
+    .brand-text {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+      color: #fff;
+    }
+    .brand-by {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 99px;
+      color: #fff;
+    }
+
+    h1 {
+      font-size: 24px; font-weight: 800; line-height: 1.3;
+      text-align: center; max-width: 480px; z-index: 1;
+      letter-spacing: -0.01em;
+    }
+    h1 .sub {
+      display: block; font-size: 14px; font-weight: 500;
+      margin-top: 10px; opacity: 0.85;
+    }
+
+    .picker {
+      display: flex; flex-direction: column; gap: 12px;
+      width: 100%; max-width: 360px; z-index: 1;
+    }
+    .lang-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 22px;
+      background: rgba(255,255,255,0.96);
+      color: #0f1117;
+      border: none; border-radius: 18px;
+      font-family: inherit;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      transition: transform 0.12s, box-shadow 0.12s;
+      text-align: left;
+      width: 100%;
+    }
+    .lang-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.22);
+    }
+    .lang-btn:active { transform: translateY(0); }
+    .lang-btn .flag {
+      width: 44px; height: 32px; flex-shrink: 0;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      background: #f0f4ff;
+    }
+    .lang-btn .body {
+      flex: 1;
+    }
+    .lang-btn .label {
+      font-size: 16px; font-weight: 800; letter-spacing: -0.01em;
+    }
+    .lang-btn .hint {
+      font-size: 12px; font-weight: 500; color: #6b7280;
+      margin-top: 2px;
+    }
+    .lang-btn .arrow {
+      color: #2a2eea; font-weight: 800; font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .footer {
+      position: absolute; bottom: 18px; left: 0; right: 0;
+      text-align: center;
+      font-size: 11px; opacity: 0.65;
+      letter-spacing: 0.04em;
+    }
+    .footer a { color: inherit; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="brand">
+    <div class="brand-mark"><img src="jp/assets/mico-mark.png" alt="mico"/></div>
+    <div class="brand-text">Mico Work Match</div>
+    <span class="brand-by">by Mico</span>
+  </div>
+
+  <h1>
+    Choose your language
+    <span class="sub">言語を選択してください</span>
+  </h1>
+
+  <div class="picker">
+    <button class="lang-btn" data-href="jp/">
+      <span class="flag">🇯🇵</span>
+      <span class="body">
+        <span class="label">日本語</span>
+        <span class="hint">Production-intent version</span>
+      </span>
+      <span class="arrow">→</span>
+    </button>
+    <button class="lang-btn" data-href="en/">
+      <span class="flag">🇬🇧</span>
+      <span class="body">
+        <span class="label">English</span>
+        <span class="hint">Translation prototype</span>
+      </span>
+      <span class="arrow">→</span>
+    </button>
+  </div>
+
+  <div class="footer">
+    LINE Mini App prototype · Phase 1
+  </div>
+
+  <script>
+    // Remember the user's last choice for 30 days, auto-redirect with a slight
+    // delay so they can change their mind by clicking before then.
+    var KEY = 'mwm-lang';
+    var url = new URL(location.href);
+    var force = url.searchParams.has('pick');
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+
+    if (saved && !force) {
+      // Auto-redirect after 1.2s, but show the picker so user can override
+      setTimeout(function() {
+        if (!document.body.dataset.cancelled) location.href = saved + '/';
+      }, 1200);
+      // Highlight the saved choice so the user knows what's about to happen
+      var btn = document.querySelector('[data-href="' + saved + '/"]');
+      if (btn) btn.style.boxShadow = '0 12px 32px rgba(0,0,0,0.28), 0 0 0 3px rgba(255,255,255,0.6)';
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.body.dataset.cancelled = '1';   // stop any pending auto-redirect
+        var href = btn.getAttribute('data-href');
+        try { localStorage.setItem(KEY, href.replace(/\/$/, '')); } catch (e) {}
+        location.href = href;
+      });
+    });
+  </script>
+</body>
+</html>
